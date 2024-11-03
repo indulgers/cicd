@@ -64,11 +64,12 @@ ssh -tt "$SERVER_USER@$SERVER_IP" << EOF
     git remote add origin $GIT_REPO
   fi
   git pull origin main
-  
+
   # Step 2.5: 安装项目依赖并构建项目
   echo "安装依赖并构建项目..."
-  npm install
-  npm run build
+  npm install -g pnpm
+  pnpm install
+  pnpm run build  
 
   # Step 2.6: 重启 Nginx 服务
   echo "重启 Nginx 服务..."
