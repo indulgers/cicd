@@ -24,7 +24,11 @@ fi
 # Step 2: 连接服务器并检查环境
 echo "连接到服务器并进行环境检查..."
 ssh -tt "$SERVER_USER@$SERVER_IP" << EOF
-  # Step 2.1: 检查项目路径是否存在
+  # Step 2.1: 添加 GitHub 到 known_hosts
+  mkdir -p ~/.ssh
+  ssh-keyscan -H github.com >> ~/.ssh/known_hosts
+
+  # Step 2.2: 检查项目路径是否存在
   if [ ! -d "$SERVER_PATH" ]; then
     echo "首次部署：创建项目目录并克隆代码仓库..."
     mkdir -p "$SERVER_PATH"
@@ -35,7 +39,7 @@ ssh -tt "$SERVER_USER@$SERVER_IP" << EOF
     git pull origin main
   fi
 
-  # Step 2.2: 检查是否安装了 Node.js 和 npm
+  # Step 2.3: 检查是否安装了 Node.js 和 npm
   if ! command -v node &> /dev/null; then
     echo "Node.js 未安装，安装 NVM 和 Node.js $NODE_VERSION..."
     
@@ -52,7 +56,7 @@ ssh -tt "$SERVER_USER@$SERVER_IP" << EOF
     echo "Node.js 已安装，跳过安装步骤。"
   fi
 
-  # Step 2.3: 检查 Git 仓库是否存在 .git
+  # Step 2.4: 检查 Git 仓库是否存在 .git
   cd "$SERVER_PATH" || exit
   if [ ! -d ".git" ]; then
     echo "初始化 Git 仓库..."
@@ -61,12 +65,12 @@ ssh -tt "$SERVER_USER@$SERVER_IP" << EOF
     git pull origin main
   fi
 
-  # Step 2.4: 安装项目依赖并构建项目
+  # Step 2.5: 安装项目依赖并构建项目
   echo "安装依赖并构建项目..."
   npm install
   npm run build
 
-  # Step 2.5: 重启 Nginx 服务
+  # Step 2.6: 重启 Nginx 服务
   echo "重启 Nginx 服务..."
   sudo systemctl restart $NGINX_SERVICE
 EOF
