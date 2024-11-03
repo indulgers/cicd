@@ -67,6 +67,7 @@ ssh -tt "$SERVER_USER@$SERVER_IP" << EOF
 
   # Step 2.5: 安装项目依赖并构建项目
   echo "安装依赖并构建项目..."
+  npm config set registry https://registry.npmmirror.com/
   npm install -g pnpm
   pnpm install
   pnpm run build  
